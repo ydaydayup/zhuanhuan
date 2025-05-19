@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  file-converter:
+    build: .
+    container_name: file-converter
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./results:/app/results
+      - ./metadata:/app/metadata
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s 
