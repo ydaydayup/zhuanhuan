@@ -5,16 +5,7 @@ FROM python:3.12-slim-bookworm
 WORKDIR /app
 
 # 安装系统依赖
-RUN apt-get update && apt-get install -y \
-    libreoffice \
-    poppler-utils \
-    tesseract-ocr \
-    tesseract-ocr-chi-sim \
-    fonts-wqy-microhei \
-    fonts-wqy-zenhei \
-    default-jre \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
 COPY . .
 
 RUN pip install uv
