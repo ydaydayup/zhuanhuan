@@ -1,3 +1,8 @@
+```bash
+# 重新构建镜像
+sudo docker compose up  --build
+```
+
 # 文件格式转换API
 
 这是一个基于Python和Flask的文件格式转换后端服务，提供API接口支持各种文档格式的转换。

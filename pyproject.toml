@@ -1,0 +1,34 @@
+[project]
+name = "zhuanhuan"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask",
+    "flask-cors",
+    "werkzeug",
+    "pdf2docx",
+    "PyPDF2",
+    "tabula-py",
+    "pandas",
+    "openpyxl",
+    "python-docx",
+    "python-pptx",
+    "Pillow",
+    "pdf2image",
+    "fpdf",
+    "markdown",
+    "weasyprint",
+    "python-dotenv",
+    "docx2pdf",
+
+]
+
+[[tool.uv.index]]
+# Optional name for the index.
+#name = "pytorch"
+# Required URL for the index.
+url = "https://mirrors.aliyun.com/pypi/simple"
+
+

@@ -1,5 +1,5 @@
 # 使用Python 3.9作为基础镜像
-FROM python:3.9-slim
+FROM python:3.12-slim-bookworm
 
 # 设置工作目录
 WORKDIR /app
@@ -12,16 +12,14 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-chi-sim \
     fonts-wqy-microhei \
     fonts-wqy-zenhei \
+    default-jre \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制项目文件
-COPY requirements.txt .
-COPY app.py .
-COPY converters.py .
-COPY utilities.py .
+COPY . .
 
+RUN pip install uv
 # 安装Python依赖
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv sync --frozen --no-cache
 
 # 创建必要的目录
 RUN mkdir -p uploads results metadata
@@ -33,4 +31,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 5000
 
 # 启动命令
-CMD ["python", "app.py", "--host", "0.0.0.0"] 
+#CMD ["python", "app.py", "--host", "0.0.0.0"]
