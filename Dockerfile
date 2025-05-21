@@ -7,7 +7,7 @@ WORKDIR /app
 # 安装系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
 COPY . .
-
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 RUN pip install uv
 # 安装Python依赖
 RUN uv sync --frozen --no-cache
