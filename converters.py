@@ -47,7 +47,6 @@ except ImportError:
 
 try:
     import markdown
-    from weasyprint import HTML
 except ImportError:
     logger.warning("无法导入markdown或weasyprint库，Markdown转PDF功能可能不可用")
 
@@ -1039,132 +1038,7 @@ def word_to_pdf(input_path: str, output_path: str, quality: int) -> str:
                             logger.warning(f"使用浏览器 {chrome_path} 打印PDF失败: {str(e)}")
             
             # 如果浏览器方法失败，尝试其他方法
-            if not browser_success:
-                # 尝试使用weasyprint将HTML转换为PDF
-                try:
-                    from weasyprint import HTML, CSS
-                    from weasyprint.fonts import FontConfiguration
-                    
-                    logger.info("使用WeasyPrint将Word内容转换为PDF")
-                    font_config = FontConfiguration()
-                    css = CSS(string="""
-                        @font-face {
-                            font-family: 'NotoSansCJK';
-                            src: url('https://cdn.jsdelivr.net/gh/googlefonts/noto-cjk@main/Sans/OTF/Chinese-Simplified/NotoSansCJKsc-Regular.otf') format('opentype');
-                        }
-                        @font-face {
-                            font-family: 'NotoSerifCJK'; 
-                            src: url('https://cdn.jsdelivr.net/gh/googlefonts/noto-cjk@main/Serif/OTF/Chinese-Simplified/NotoSerifCJKsc-Regular.otf') format('opentype');
-                        }
-                        body {
-                            font-family: 'NotoSansCJK', 'NotoSerifCJK', sans-serif;
-                        }
-                    """, font_config=font_config)
-                    
-                    HTML(filename=temp_html_path).write_pdf(output_path, stylesheets=[css], font_config=font_config)
-                    if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                        logger.info("WeasyPrint转换成功")
-                        os.remove(temp_html_path)
-                        return output_path
-                except Exception as we:
-                    logger.warning(f"WeasyPrint转换失败, 尝试其他方法: {str(we)}")
-                
-                # 尝试使用pdfkit (wkhtmltopdf)
-                try:
-                    import pdfkit
-                    logger.info("使用pdfkit将Word内容转换为PDF")
-                    options = {
-                        'encoding': 'UTF-8',
-                        'enable-local-file-access': None
-                    }
-                    pdfkit.from_file(temp_html_path, output_path, options=options)
-                    if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                        logger.info("pdfkit转换成功")
-                        os.remove(temp_html_path)
-                        return output_path
-                except Exception as pe:
-                    logger.warning(f"pdfkit转换失败: {str(pe)}")
-                
-                # 尝试使用reportlab
-                try:
-                    from reportlab.pdfgen import canvas
-                    from reportlab.lib.pagesizes import letter, A4
-                    from reportlab.pdfbase import pdfmetrics
-                    from reportlab.pdfbase.ttfonts import TTFont
-                    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
-                    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-                    
-                    # 尝试将字体文件放到临时文件夹，避免权限问题
-                    temp_font_dir = os.path.dirname(output_path)
-                    font_path = os.path.join(temp_font_dir, "simsun.ttf")
-                    
-                    # 尝试从常见位置复制字体
-                    font_found = False
-                    for font_src in [
-                        r"C:\Windows\Fonts\simsun.ttc",
-                        r"C:\Windows\Fonts\simhei.ttf",
-                        r"C:\Windows\Fonts\msyh.ttc",
-                        r"C:\Windows\Fonts\simkai.ttf"
-                    ]:
-                        if os.path.exists(font_src):
-                            try:
-                                import shutil
-                                shutil.copy(font_src, font_path)
-                                font_found = True
-                                logger.info(f"复制字体 {font_src} 到 {font_path}")
-                                break
-                            except:
-                                continue
-                    
-                    if font_found:
-                        # 创建PDF文档
-                        doc = SimpleDocTemplate(
-                            output_path,
-                            pagesize=A4,
-                            rightMargin=72,
-                            leftMargin=72,
-                            topMargin=72,
-                            bottomMargin=72
-                        )
-                        
-                        # 注册字体
-                        font_name = 'SimSun'
-                        pdfmetrics.registerFont(TTFont(font_name, font_path))
-                        
-                        # 创建样式
-                        styles = getSampleStyleSheet()
-                        chinese_style = ParagraphStyle(
-                            'ChineseStyle',
-                            parent=styles['Normal'],
-                            fontName=font_name,
-                            fontSize=12,
-                            leading=14,  # 行距
-                            firstLineIndent=24  # 首行缩进
-                        )
-                        
-                        # 构建文档元素
-                        elements = []
-                        for para in content:
-                            if para.strip():
-                                p = Paragraph(para, chinese_style)
-                                elements.append(p)
-                                elements.append(Spacer(1, 12))  # 段间距
-                        
-                        # 构建PDF
-                        doc.build(elements)
-                        
-                        logger.info("使用reportlab生成PDF成功")
-                        if os.path.exists(font_path):
-                            try:
-                                os.remove(font_path)
-                            except:
-                                pass
-                        os.remove(temp_html_path)
-                        return output_path
-                except Exception as re:
-                    logger.warning(f"reportlab转换失败: {str(re)}")
-            
-            # 如果HTML临时文件还存在，清理它
+     # 如果HTML临时文件还存在，清理它
             if os.path.exists(temp_html_path):
                 try:
                     os.remove(temp_html_path)

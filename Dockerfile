@@ -1,6 +1,4 @@
-# 使用Python 3.9作为基础镜像
 FROM python:3.12-slim-bookworm
-
 # 设置工作目录
 WORKDIR /app
 
