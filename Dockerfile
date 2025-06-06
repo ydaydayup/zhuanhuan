@@ -2,8 +2,9 @@ FROM python:3.12-slim-bookworm
 # 设置工作目录
 WORKDIR /app
 
+
 # 安装系统依赖
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && apt-get install poppler-utils
 COPY . .
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 RUN pip install uv
